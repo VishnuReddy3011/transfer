@@ -1,74 +1,66 @@
 import React, { useState } from 'react'
 import "./App.css"
 
-
 const App = () => {
-	const temp = [
-		{
-			name: "Apple",
-			isChecked: false,
-			position: true
-		},
-		{
-			name: "Banana",
-			isChecked: false,
-			position: true
-		},
-		{
-			name: "Orange",
-			isChecked: false,
-			position: true
-		},
-		{
-			name: "Grapes",
-			isChecked: false,
-			position: true
-		},
-		{
-			name: "Guava",
-			isChecked: false,
-			position: true
-		},
-		{
-			name: "Mango",
-			isChecked: false,
-			position: true
-		},
-		{
-			name: "Kiwi",
-			isChecked: false,
-			position: true
-		}
-	];
+	const tempArr = ["Apple","Banana","Orange","Grapes","Guava","Mango","Kiwi"];
 
-	const [arr, setArr] = useState(temp);
+	const [leftarr, setLeftarr] = useState([...tempArr]);
+	const [leftChecks, setLeftChecks] = useState(
+		new Array(tempArr.length).fill(false)
+	);
+
+	const [rightarr, setRightarr] = useState([]);
+	const [rightChecks, setRightChecks] = useState([]);
+
+	const handleChangeLeft = (index) => {
+		const newCheckedItems = [...leftChecks];
+		newCheckedItems[index] = !newCheckedItems[index];
+		setLeftChecks(newCheckedItems);
+	}
+	const handleChangeRight = (index) => {
+		const newCheckedItems = [...rightChecks];
+		newCheckedItems[index] = !newCheckedItems[index];
+		setRightChecks(newCheckedItems);
+	}
 
 	const moveRight = () => {
-		const updatedArr = arr.map((item)=>{
-			if(item.isChecked) {
-				return{
-					...item,
-					isChecked: false,
-					position: false
-				}
+		const newLeft = leftarr.filter((item,index) => {
+			return leftChecks[index] === false;
+		});
+		const newRight = [...rightarr];
+		for(let i=0; i<leftarr.length; i++){
+			if(leftChecks[i] === true){
+				newRight.push(leftarr[i]);
 			}
-			return item;
-		})
-		setArr(updatedArr);
+		}
+		const newLeftChecks = new Array(newLeft.length).fill(false);
+		const newRightChecks = new Array(newRight.length).fill(false);
+
+		setLeftarr(newLeft);
+		setRightarr(newRight);
+
+		setLeftChecks(newLeftChecks);
+		setRightChecks(newRightChecks);
 	}
 
 	const moveLeft = () => {
-		const updatedArr = arr.map((item)=>{
-			if(item.isChecked) {
-				return{
-					...item,
-					isChecked: false,
-					position: true
-				}
+		const newLeft = [...leftarr];
+		for(let i=0; i<rightarr.length; i++){
+			if(rightChecks[i] === true){
+				newLeft.push(rightarr[i]);
 			}
-			return item;
-		})
-		setArr(updatedArr);
+		}
+		const newRight = rightarr.filter((item,index) => {
+			return rightChecks[index] === false;
+		});
+		const newLeftChecks = new Array(newLeft.length).fill(false);
+		const newRightChecks = new Array(newRight.length).fill(false);
+
+		setLeftarr(newLeft);
+		setRightarr(newRight);
+
+		setLeftChecks(newLeftChecks);
+		setRightChecks(newRightChecks);
 	}
 
   	return(
@@ -76,19 +68,18 @@ const App = () => {
 			<div className="left">
 				<div className="box">
 					<div>
-						{arr.filter((item)=>item.position===true).map((item,index)=>{
+						{leftarr.map((item,index)=>{
 							return(						
 								<div key={index}>
 									<input 
-										value={item.name} 
+										value={item} 
 										type="checkbox" 
-										// checked={item.isChecked}
-                    					onChange={e => {
-											item.isChecked = e.target.checked;
-                    					}
-									}/>
-									<span>{item.name}</span>
-								</div>)
+										checked = {leftChecks[index]}
+										onChange={()=>handleChangeLeft(index)}
+									/>
+									<span>{item}</span>
+								</div>
+							)
 						})}
 					</div>
 				</div>
@@ -104,19 +95,18 @@ const App = () => {
 			<div className="right">
 				<div className="box">
 					<div>
-						{arr.filter((item)=>item.position === false).map((item,index)=>{
+						{rightarr.map((item,index)=>{
 							return(						
 								<div key={index}>
 									<input 
-										value={item.name} 
+										value={item} 
 										type="checkbox" 
-										// checked={item.isChecked}
-										onChange={e => {
-											item.isChecked = e.target.checked;
-										}}
+										checked={rightChecks[index]}
+										onChange={()=>handleChangeRight(index)}
 									/>
-									<span>{item.name}</span>
-								</div>)
+									<span>{item}</span>
+								</div>
+							)
 						})}
 					</div>
 				</div>
